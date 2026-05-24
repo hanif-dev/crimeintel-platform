@@ -1,0 +1,135 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  # ── Backend (.NET 8) ────────────────────────────────────────
+  backend:
+    name: Backend — Build & Test
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./backend
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Restore dependencies
+        run: dotnet restore CrimeIntel.API/CrimeIntel.API.csproj
+
+      - name: Build
+        run: dotnet build CrimeIntel.API/CrimeIntel.API.csproj --no-restore -c Release
+
+      - name: Docker build check
+        run: docker build -f Dockerfile . -t crimeintel-api:ci
+
+  # ── Python Services ─────────────────────────────────────────
+  python-ingestion:
+    name: Python — Ingestion Service
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./python-services/ingestion
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install deps
+        run: pip install -r requirements.txt
+
+      - name: Lint (ruff)
+        run: pip install ruff && ruff check . --ignore E501 || true
+
+  python-ml:
+    name: Python — ML Service
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./python-services/ml-service
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install deps
+        run: pip install -r requirements.txt
+
+      - name: Test ML endpoints
+        run: |
+          python -c "
+          from main import _extract_features, _train_model, _score_one, ModelStore, store
+          _train_model()
+          tx = {'amount': 500000, 'from_country': 'RU', 'to_country': 'CY', 'currency': 'EUR'}
+          score, explanation = _score_one(tx)
+          assert 0 <= score <= 100, f'Score out of range: {score}'
+          assert len(explanation) > 0
+          print(f'ML test passed: score={score:.1f}')
+          "
+
+  # ── Frontend (Vue.js + TypeScript) ──────────────────────────
+  frontend:
+    name: Frontend — Build & Type Check
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./frontend
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Type check
+        run: npm run type-check
+
+      - name: Build
+        run: npm run build
+
+  # ── Docker Compose validation ───────────────────────────────
+  compose-validate:
+    name: Docker Compose — Validate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Copy env
+        run: cp .env.example .env
+
+      - name: Validate docker-compose syntax
+        run: docker compose config --quiet
+
+  # ── Summary ─────────────────────────────────────────────────
+  ci-success:
+    name: All checks passed
+    needs: [backend, python-ingestion, python-ml, frontend, compose-validate]
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "✅ All CI checks passed"

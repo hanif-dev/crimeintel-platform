@@ -1,0 +1,47 @@
+{
+  "name": "CrimeIntel Platform",
+  "image": "mcr.microsoft.com/devcontainers/universal:2",
+
+  "features": {
+    "ghcr.io/devcontainers/features/dotnet:2": {
+      "version": "8.0"
+    },
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {
+      "version": "latest",
+      "dockerDashComposeVersion": "v2"
+    }
+  },
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-dotnettools.csharp",
+        "ms-dotnettools.csdevkit",
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "Vue.volar",
+        "bradlc.vscode-tailwindcss",
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "ms-azuretools.vscode-docker",
+        "rangav.vscode-thunder-client"
+      ],
+      "settings": {
+        "editor.formatOnSave": true,
+        "terminal.integrated.defaultProfile.linux": "bash"
+      }
+    }
+  },
+
+  "forwardPorts": [3000, 5000, 8000, 8001, 9200, 1433],
+  "portsAttributes": {
+    "3000": { "label": "Frontend (Vue.js)", "onAutoForward": "openBrowser" },
+    "5000": { "label": "API (.NET 8)",      "onAutoForward": "silent" },
+    "8000": { "label": "Ingestion (Python)","onAutoForward": "silent" },
+    "8001": { "label": "ML Service (Python)","onAutoForward": "silent" },
+    "9200": { "label": "Elasticsearch",     "onAutoForward": "silent" },
+    "1433": { "label": "SQL Server",        "onAutoForward": "silent" }
+  },
+
+  "postCreateCommand": "bash scripts/codespace-init.sh"
+}
