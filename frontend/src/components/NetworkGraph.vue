@@ -118,10 +118,10 @@ function draw() {
     .text((d: any) => d.label)
 
   // Node group
-  const node = g.append('g').selectAll('g')
+  const node = (g.append('g').selectAll('g')
     .data(nodes)
     .join('g')
-    .attr('cursor', 'pointer')
+    .attr('cursor', 'pointer') as any)
     .call(
       d3.drag<SVGGElement, any>()
         .on('start', (e, d) => { if (!e.active) simulation.alphaTarget(0.3).restart(); d.fx = d.x; d.fy = d.y })
@@ -155,7 +155,7 @@ function draw() {
 
   // Tooltip on hover
   node
-    .on('mouseenter', (event, d: any) => {
+    .on('mouseenter', (event: MouseEvent, d: any) => {
       const rect = container.value!.getBoundingClientRect()
       tooltip.visible = true
       tooltip.x = event.clientX - rect.left + 12
@@ -165,7 +165,7 @@ function draw() {
       tooltip.risk = d.risk ?? 0
       tooltip.country = d.country ?? ''
     })
-    .on('mousemove', (event) => {
+    .on('mousemove', (event: MouseEvent) => {
       const rect = container.value!.getBoundingClientRect()
       tooltip.x = event.clientX - rect.left + 12
       tooltip.y = event.clientY - rect.top - 10

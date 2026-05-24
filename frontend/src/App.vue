@@ -68,7 +68,7 @@ import axios from 'axios'
 
 const route = useRoute()
 
-const navItems = [
+const navItems: { path: string; icon: string; label: string; badge?: string }[] = [
   { path: '/',        icon: '◈', label: 'Dashboard' },
   { path: '/cases',   icon: '⊡', label: 'Cases' },
   { path: '/search',  icon: '⊕', label: 'Search' },
