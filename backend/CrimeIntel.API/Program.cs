@@ -36,7 +36,9 @@ try
     builder.Services.AddScoped<IAnalyticsService, AnalyticsService>();
 
     // ── Controllers ───────────────────────────────────────────
-    builder.Services.AddControllers();
+    builder.Services.AddControllers().AddJsonOptions(o =>
+    o.JsonSerializerOptions.ReferenceHandler =
+        System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles);
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen(c =>
     {
@@ -71,7 +73,7 @@ try
         var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
 
         logger.LogInformation("Applying database migrations...");
-        db.Database.Migrate();
+        db.Database.EnsureCreated();
 
         logger.LogInformation("Ensuring Elasticsearch index...");
         await es.EnsureIndexAsync();
