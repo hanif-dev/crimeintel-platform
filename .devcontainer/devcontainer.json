@@ -1,12 +1,31 @@
 {
   "name": "CrimeIntel Platform",
   "image": "mcr.microsoft.com/devcontainers/universal:2",
-  "forwardPorts": [3000, 5000, 8000, 8001, 9200],
+  "forwardPorts": [
+    3000,
+    5000,
+    8000,
+    8001,
+    9200
+  ],
   "portsAttributes": {
-    "3000": { "label": "Frontend", "onAutoForward": "openBrowser" },
-    "5000": { "label": "API .NET",  "onAutoForward": "silent" },
-    "8000": { "label": "Ingestion", "onAutoForward": "silent" },
-    "8001": { "label": "ML",        "onAutoForward": "silent" }
+    "3000": {
+      "label": "Frontend",
+      "onAutoForward": "openBrowser"
+    },
+    "5000": {
+      "label": "API .NET",
+      "onAutoForward": "silent"
+    },
+    "8000": {
+      "label": "Ingestion",
+      "onAutoForward": "silent"
+    },
+    "8001": {
+      "label": "ML",
+      "onAutoForward": "silent"
+    }
   },
-  "postCreateCommand": "cp .env.example .env && cd frontend && npm install"
+  "postCreateCommand": "cp .env.example .env && cd frontend && npm install",
+  "postStartCommand": "gh codespace ports visibility 5000:public 8000:public 8001:public -c $CODESPACE_NAME 2>/dev/null || true"
 }
