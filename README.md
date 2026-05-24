@@ -1,164 +1,261 @@
 # CrimeIntel Platform
 
-> Intelligence Analysis Platform for Fraud & Criminal Network Detection
+> Full-stack intelligence analysis platform for fraud detection and criminal network analysis — built as a portfolio demonstration of production-grade software engineering across multiple technology stacks.
 
-[![CI](https://github.com/YOUR_USERNAME/crimeintel-platform/actions/workflows/ci.yml/badge.svg)](https://github.com/YOUR_USERNAME/crimeintel-platform/actions/workflows/ci.yml)
+[![CI](https://github.com/hanif-dev/crimeintel-platform/actions/workflows/ci.yml/badge.svg)](https://github.com/hanif-dev/crimeintel-platform/actions/workflows/ci.yml)
+![.NET](https://img.shields.io/badge/.NET-8.0-512BD4?logo=dotnet)
+![Python](https://img.shields.io/badge/Python-3.11-3776AB?logo=python)
+![Vue.js](https://img.shields.io/badge/Vue.js-3-4FC08D?logo=vuedotjs)
+![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker)
+![Elasticsearch](https://img.shields.io/badge/Elasticsearch-8.x-005571?logo=elasticsearch)
 
-A full-stack intelligence analysis platform demonstrating production-grade software development across multiple technology stacks. Built to mirror real-world law enforcement intelligence systems.
+---
+
+## Overview
+
+CrimeIntel is a multi-service intelligence platform that mirrors real-world law enforcement and financial crime analysis systems. It demonstrates end-to-end software delivery — from data ingestion and ML scoring through to REST APIs, full-text search, and an interactive analyst workspace with network graph visualisation.
+
+The platform is designed to showcase skills directly relevant to roles in international organisations such as Europol, Interpol, financial intelligence units, and RegTech companies.
 
 ---
 
 ## Architecture
 
 ```
-┌──────────────────────────────────────────────────────────┐
-│                   CrimeIntel Platform                    │
-│                                                          │
-│  Vue.js 3 + TypeScript (Frontend)   :3000               │
-│  ├─ D3.js Network Graph (Link Analysis)                  │
-│  ├─ Chart.js Dashboard (Analytics)                       │
-│  └─ Elasticsearch-powered Search                         │
-│                                                          │
-│  .NET 8 REST API (Backend)          :5000               │
-│  ├─ Entity Framework Core + SQL Server                   │
-│  ├─ Elasticsearch NEST client                            │
-│  └─ Microservice-ready architecture                      │
-│                                                          │
-│  FastAPI Ingestion Service (Python) :8000               │
-│  ├─ CSV/JSON ETL pipeline                                │
-│  └─ pandas data cleaning + validation                    │
-│                                                          │
-│  FastAPI ML Service (Python)        :8001               │
-│  ├─ Isolation Forest anomaly detection                   │
-│  └─ Feature explainability                               │
-│                                                          │
-│  Infrastructure (Docker)                                 │
-│  ├─ SQL Server 2022                 :1433               │
-│  └─ Elasticsearch 8.x              :9200               │
-└──────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────┐
+│                     CrimeIntel Platform                     │
+│                                                             │
+│  ┌──────────────────────────────────────────────────────┐  │
+│  │           Vue 3 + TypeScript Frontend  :3000          │  │
+│  │  Dashboard · Cases · Search · Network Graph · Ingest  │  │
+│  └────────────┬──────────────┬──────────────────────────┘  │
+│               │              │                              │
+│  ┌────────────▼──┐  ┌────────▼────────┐  ┌─────────────┐  │
+│  │  .NET 8 API   │  │ Ingestion Svc   │  │  ML Service  │  │
+│  │  :5000        │  │ (Python) :8000  │  │ (Python)     │  │
+│  │  REST + CRUD  │  │ ETL Pipeline    │  │ :8001        │  │
+│  │  EF Core      │  │ CSV/JSON ingest │  │ Isolation    │  │
+│  │  Elasticsearch│  │ pandas cleaning │  │ Forest model │  │
+│  └──────┬────┬──┘  └────────┬────────┘  └──────┬───────┘  │
+│         │    │               │                  │           │
+│  ┌──────▼─┐ ┌▼─────────────┐│                  │           │
+│  │  SQL   │ │Elasticsearch  ││◄─────────────────┘           │
+│  │ Server │ │  8.x  :9200   ││                              │
+│  │  2022  │ │  Full-text    ││                              │
+│  └────────┘ └───────────────┘│                              │
+│                               │                              │
+│  ──── Docker Compose ─────────┘                             │
+│  ──── GitHub Actions CI/CD ──────────────────────────────  │
+└─────────────────────────────────────────────────────────────┘
 ```
+
+---
 
 ## Tech Stack
 
 | Layer | Technology |
 |---|---|
-| **Frontend** | Vue 3, TypeScript, Pinia, Vue Router, Tailwind CSS |
-| **Visualisation** | D3.js (network graph), Chart.js (analytics) |
-| **Backend API** | .NET 8, C#, Entity Framework Core, Swagger |
+| **Backend API** | C# .NET 8, Entity Framework Core 8, Swagger/OpenAPI |
 | **Search** | Elasticsearch 8.x |
 | **Database** | Microsoft SQL Server 2022 |
-| **ETL** | Python, FastAPI, pandas |
-| **ML** | scikit-learn (Isolation Forest), numpy |
-| **DevOps** | Docker, docker-compose, GitHub Actions CI/CD |
+| **ETL Service** | Python 3.11, FastAPI, pandas |
+| **ML Service** | Python 3.11, FastAPI, scikit-learn (Isolation Forest) |
+| **Frontend** | Vue 3, TypeScript, Pinia, Vue Router, Tailwind CSS |
+| **Visualisation** | D3.js (network/link analysis graph), Chart.js (analytics) |
+| **Infrastructure** | Docker, docker-compose |
+| **CI/CD** | GitHub Actions (build, type-check, test, compose validate) |
+| **Dev Environment** | GitHub Codespaces (devcontainer) |
 
-## Quick Start (GitHub Codespaces)
-
-1. **Open in Codespace** — click the green Code button → Codespaces → New
-2. **Copy env file:**
-   ```bash
-   cp .env.example .env
-   ```
-3. **Start all services:**
-   ```bash
-   docker compose up --build
-   ```
-4. Visit the forwarded port **3000** for the frontend
-
-The app auto-seeds sample intelligence cases on first run.
-
-## Quick Start (Local)
-
-**Prerequisites:** Docker Desktop, Git
-
-```bash
-git clone https://github.com/YOUR_USERNAME/crimeintel-platform
-cd crimeintel-platform
-cp .env.example .env
-docker compose up --build
-```
-
-| Service | URL |
-|---|---|
-| Frontend | http://localhost:3000 |
-| API + Swagger | http://localhost:5000/swagger |
-| Ingestion API | http://localhost:8000/docs |
-| ML API | http://localhost:8001/docs |
-| Elasticsearch | http://localhost:9200 |
+---
 
 ## Key Features
 
-### 🔍 Intelligence Case Management
-- Full CRUD for cases with risk scoring, status tracking, and analyst assignment
-- Category classification: Financial Fraud, Cybercrime, Money Laundering, Terrorism Financing, etc.
+### Intelligence Case Management
+- Full CRUD for cases with risk scoring (0–100), status tracking, and analyst assignment
+- Crime categories: Financial Fraud, Cybercrime, Money Laundering, Terrorism Financing, Organised Crime, Trafficking
+- Audit trail via analyst notes
 
-### ⬡ Link Analysis (Network Graph)
+### Link Analysis — Network Graph
 - D3.js force-directed graph visualising entity relationships
-- Supports Person → Company → Account → IP relationship types
-- Interactive: drag nodes, zoom, hover for details
+- Entity types: Person, Company, Account, CryptoWallet, IPAddress
+- Relationship types: `controls`, `funds`, `communicates_with`
+- Interactive: drag nodes, zoom, hover tooltips
 
-### 🤖 ML Fraud Scoring
-- Isolation Forest anomaly detection trained on synthetic transaction data
-- 7-feature model: amount, cross-border flag, high-risk country flags, timing, currency, round amounts
-- Feature importance explainability per transaction
-- Batch scoring via REST API
+### ML Fraud Scoring
+- Isolation Forest anomaly detection (scikit-learn)
+- 7-feature model: transaction amount, cross-border flag, high-risk country flags, time-of-day, currency risk, round-amount pattern
+- Per-feature explainability score on every result
+- Batch scoring via REST API for ETL pipeline integration
 
-### 📊 Analytics Dashboard
-- Real-time statistics: active cases, critical flags, flagged transaction value
-- Timeline chart (last 30 days)
-- Risk distribution doughnut chart
-
-### 🔎 Full-Text Search
+### Full-Text Search
 - Elasticsearch-powered fuzzy search across cases, entities, descriptions
 - Filter by risk level and crime category
 
-### ⊞ Data Ingestion Pipeline
-- CSV upload with drag-and-drop
-- pandas-based ETL: cleaning, normalisation, validation
-- Auto-routing to ML scoring service on ingest
+### Analytics Dashboard
+- Live statistics: total cases, active investigations, critical alerts, flagged transaction value
+- 30-day case timeline (line chart)
+- Risk level distribution (doughnut chart)
 
-## Development
+### Data Ingestion Pipeline
+- Drag-and-drop CSV upload for transactions and entities
+- pandas ETL: cleaning, normalisation, type coercion, validation
+- Auto-routing to ML scoring on every ingested transaction
+- Pipeline health status (API, ML, Ingestion)
+
+---
+
+## Quick Start
+
+### GitHub Codespaces (recommended)
+
+1. Click **Code → Codespaces → New codespace** on this repo
+2. Wait for the environment to build
+3. In the terminal:
 
 ```bash
-# Backend only
+docker compose up sqlserver elasticsearch api ml-service ingestion -d
+sleep 20
+cd frontend && npm run dev
+```
+
+4. Open the forwarded port **3000** — the app loads with seeded sample data.
+
+**Shortcut alias** (add to `~/.bashrc`):
+```bash
+alias ci-start="cd /workspaces/crimeintel-platform && docker compose up sqlserver elasticsearch api ml-service ingestion -d && sleep 20 && cd frontend && npm run dev"
+```
+
+### Local Development
+
+**Prerequisites:** Docker Desktop, Git, Node.js 20+, .NET SDK 8, Python 3.11
+
+```bash
+git clone https://github.com/hanif-dev/crimeintel-platform
+cd crimeintel-platform
+cp .env.example .env
+docker compose up sqlserver elasticsearch -d
+sleep 15
+
+# Terminal 1 — API
 cd backend && dotnet run --project CrimeIntel.API
 
-# Frontend only
+# Terminal 2 — ML Service
+cd python-services/ml-service && pip install -r requirements.txt && uvicorn main:app --reload --port 8001
+
+# Terminal 3 — Ingestion Service
+cd python-services/ingestion && pip install -r requirements.txt && uvicorn main:app --reload --port 8000
+
+# Terminal 4 — Frontend
 cd frontend && npm install && npm run dev
-
-# ML service only
-cd python-services/ml-service && uvicorn main:app --reload --port 8001
-
-# Ingestion only
-cd python-services/ingestion && uvicorn main:app --reload --port 8000
 ```
+
+---
+
+## Service URLs
+
+| Service | URL | Description |
+|---|---|---|
+| Frontend | http://localhost:3000 | Vue.js analyst workspace |
+| API Swagger | http://localhost:5000/swagger | Interactive API docs |
+| Ingestion Docs | http://localhost:8000/docs | FastAPI ETL docs |
+| ML Docs | http://localhost:8001/docs | FastAPI ML scoring docs |
+| Elasticsearch | http://localhost:9200 | Search engine |
+
+---
 
 ## Project Structure
 
 ```
 crimeintel-platform/
-├── .devcontainer/          # GitHub Codespaces configuration
-├── .github/workflows/      # CI/CD (GitHub Actions)
+├── .devcontainer/
+│   └── devcontainer.json          # GitHub Codespaces config
+├── .github/
+│   └── workflows/
+│       └── ci.yml                 # GitHub Actions CI/CD pipeline
 ├── backend/
 │   └── CrimeIntel.API/
-│       ├── Controllers/    # REST endpoints
-│       ├── Services/       # Business logic + Elasticsearch
-│       ├── Models/         # Domain models (Case, Entity, Transaction)
-│       └── Data/           # EF Core DbContext + seeder
+│       ├── Controllers/           # REST API endpoints
+│       ├── Data/                  # EF Core DbContext + seeder
+│       ├── Models/                # Domain models (Case, Entity, Transaction)
+│       └── Services/             # Business logic, Elasticsearch client
 ├── python-services/
-│   ├── ingestion/          # FastAPI ETL service
-│   └── ml-service/         # FastAPI ML scoring service
+│   ├── ingestion/                 # FastAPI ETL service
+│   │   ├── main.py               # Endpoints + ETL pipeline
+│   │   └── requirements.txt
+│   └── ml-service/               # FastAPI ML scoring service
+│       ├── main.py               # Isolation Forest model + API
+│       └── requirements.txt
 ├── frontend/
 │   └── src/
-│       ├── views/          # Dashboard, Cases, Search, Ingest
-│       ├── components/     # NetworkGraph (D3), shared UI
-│       ├── stores/         # Pinia state management
-│       ├── api/            # Axios API client
-│       └── types/          # TypeScript interfaces
+│       ├── api/                  # Axios API client
+│       ├── components/           # NetworkGraph.vue (D3.js)
+│       ├── router/               # Vue Router
+│       ├── stores/               # Pinia state management
+│       ├── types/                # TypeScript interfaces
+│       └── views/                # Dashboard, Cases, Search, Ingest
+├── data/
+│   └── samples/                  # Sample CSV for testing ingestion
+├── scripts/
+│   └── codespace-init.sh         # Codespaces setup script
 ├── docker-compose.yml
-└── .env.example
+├── .env.example
+└── README.md
 ```
+
+---
+
+## Sample Data
+
+The platform auto-seeds four intelligence cases on first run:
+
+| Case | Category | Risk | Score |
+|---|---|---|---|
+| Shell Company Network — Baltic Region | Money Laundering | Critical | 94.2 |
+| Ransomware Proceeds — Crypto Layering | Cybercrime | High | 87.5 |
+| Dark Web Marketplace — Payment Processor | Organised Crime | High | 81.3 |
+| Trade-Based Fraud — Import Overvaluation | Financial Fraud | Medium | 62.1 |
+
+All data is entirely synthetic and does not represent real cases, individuals, or organisations.
+
+---
+
+## CI/CD Pipeline
+
+GitHub Actions runs on every push to `main` and `develop`:
+
+- **Backend** — `dotnet restore` → `dotnet build` → Docker build check
+- **Python Ingestion** — `pip install` → `ruff` lint
+- **Python ML** — `pip install` → unit test on scoring logic
+- **Frontend** — `npm ci` → TypeScript type-check → `vite build`
+- **Compose** — `docker compose config` syntax validation
+
+---
+
+## Skills Demonstrated
+
+This project directly maps to the technical requirements for senior software engineering roles in international law enforcement and intelligence organisations:
+
+| Skill | Implementation |
+|---|---|
+| C# / .NET 8 REST API | `CrimeIntel.API` — controllers, EF Core, Elasticsearch |
+| Python ETL & tooling | `ingestion/` — FastAPI, pandas pipeline |
+| Machine Learning | `ml-service/` — Isolation Forest, explainability |
+| SQL Server | EF Core with migrations, relational schema |
+| Elasticsearch | Full-text indexing, fuzzy search |
+| Docker | 5-service compose stack |
+| CI/CD | GitHub Actions — build, test, validate |
+| Vue.js + TypeScript | SPA with Pinia, Vue Router, Tailwind |
+| D3.js Link Analysis | Force-directed entity network graph |
+| Agile/Scrum-ready | Feature branches, PR workflow, documented |
+
+---
+
+## Author
+
+**Hanif** — [hanif-dev.github.io](https://hanif-dev.github.io)
+
+---
 
 ## License
 
-MIT — built for portfolio demonstration purposes.
-Sample data is entirely synthetic and does not represent real cases or individuals.
+MIT — see [LICENSE](LICENSE)
