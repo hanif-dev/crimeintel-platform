@@ -36,9 +36,12 @@ try
     builder.Services.AddScoped<IAnalyticsService, AnalyticsService>();
 
     // ── Controllers ───────────────────────────────────────────
-    builder.Services.AddControllers().AddJsonOptions(o =>
+    builder.Services.AddControllers().AddJsonOptions(o => {
     o.JsonSerializerOptions.ReferenceHandler =
-        System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles);
+        System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+    o.JsonSerializerOptions.Converters.Add(
+        new System.Text.Json.Serialization.JsonStringEnumConverter());
+});
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen(c =>
     {
