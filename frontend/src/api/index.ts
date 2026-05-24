@@ -1,12 +1,15 @@
 import axios from 'axios'
 import type { Case, DashboardStats, NetworkGraph } from '@/types'
 
-const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000',
+// Pakai relative URL — semua lewat Vite proxy di port 3000
+// Tidak perlu VITE_API_URL, tidak ada CORS
+const api = axios.create({ timeout: 10_000 })
+
+const mlApi = axios.create({
+  baseURL: '/ml',
   timeout: 10_000,
 })
 
-// Cases
 export const getCases = (params?: Record<string, unknown>) =>
   api.get<Case[]>('/api/cases', { params }).then(r => r.data)
 
@@ -28,11 +31,9 @@ export const addNote = (id: number, content: string, author: string) =>
 export const getNetwork = (id: number) =>
   api.get<NetworkGraph>(`/api/cases/${id}/network`).then(r => r.data)
 
-// Search
 export const searchCases = (q: string, riskLevel?: string, category?: string) =>
   api.get('/api/search', { params: { q, riskLevel, category } }).then(r => r.data)
 
-// Analytics
 export const getDashboardStats = () =>
   api.get<DashboardStats>('/api/analytics/dashboard').then(r => r.data)
 
@@ -41,12 +42,6 @@ export const getRiskDistribution = () =>
 
 export const getTimeline = (days = 30) =>
   api.get('/api/analytics/timeline', { params: { days } }).then(r => r.data)
-
-// ML
-const mlApi = axios.create({
-  baseURL: import.meta.env.VITE_ML_URL || 'http://localhost:8001',
-  timeout: 10_000,
-})
 
 export const scoreTransaction = (tx: Record<string, unknown>) =>
   mlApi.post('/score', tx).then(r => r.data)

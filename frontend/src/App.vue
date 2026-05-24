@@ -109,11 +109,11 @@ const services = ref([
 ])
 
 async function checkHealth() {
-  const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000'
-  const mlUrl  = import.meta.env.VITE_ML_URL  || 'http://localhost:8001'
+  const apiUrl = ''
+  const mlUrl  = '/ml'
   await Promise.allSettled([
-    axios.get(`${apiUrl}/api/health`).then(() => { services.value[0].ok = true }).catch(() => { services.value[0].ok = false }),
-    axios.get(`${mlUrl}/health`).then(() => { services.value[1].ok = true }).catch(() => { services.value[1].ok = false }),
+    axios.get(`/api/health`).then(() => { services.value[0].ok = true }).catch(() => { services.value[0].ok = false }),
+    axios.get(`/ml/health`).then(() => { services.value[1].ok = true }).catch(() => { services.value[1].ok = false }),
     axios.get(`${apiUrl}/api/search?q=test`).then(() => { services.value[2].ok = true }).catch(() => { services.value[2].ok = false }),
   ])
 }

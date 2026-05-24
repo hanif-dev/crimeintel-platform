@@ -144,9 +144,9 @@ const services = reactive([
 ])
 
 onMounted(async () => {
-  const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000'
-  const ingUrl = import.meta.env.VITE_INGESTION_URL || 'http://localhost:8000'
-  const mlUrl  = import.meta.env.VITE_ML_URL  || 'http://localhost:8001'
+  const apiUrl = ''
+  const ingUrl = '/ingest'
+  const mlUrl  = '/ml'
   await Promise.allSettled([
     axios.get(`${apiUrl}/api/health`).then(() => services[0].status = 'ok').catch(() => services[0].status = 'error'),
     axios.get(`${ingUrl}/health`).then(() => services[1].status = 'ok').catch(() => services[1].status = 'error'),
@@ -169,7 +169,7 @@ async function uploadCSV() {
   try {
     const form = new FormData()
     form.append('file', selectedFile.value)
-    const ingUrl = import.meta.env.VITE_INGESTION_URL || 'http://localhost:8000'
+    const ingUrl = '/ingest'
     const { data } = await axios.post(`${ingUrl}/ingest/transactions/csv?case_id=${caseId.value}`, form)
     ingestResult.value = data
   } catch (e: any) {

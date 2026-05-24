@@ -45,7 +45,7 @@
         <div v-if="store.loading" class="text-gray-500 text-sm font-mono">Loading cases...</div>
         <RouterLink v-for="c in topCases" :key="c.id" :to="`/cases/${c.id}`"
           class="flex items-center gap-4 px-4 py-3 rounded-lg bg-ink-900 hover:bg-ink-700 transition-colors border border-ink-600 hover:border-signal/30 group">
-          <span :class="`badge-${c.riskLevel.toLowerCase()}`">{{ c.riskLevel }}</span>
+          <span :class="`badge-${(c.riskLevel || '').toLowerCase()}`">{{ c.riskLevel }}</span>
           <div class="flex-1 min-w-0">
             <p class="text-white text-sm font-display font-medium truncate group-hover:text-signal transition-colors">{{ c.title }}</p>
             <p class="text-gray-500 text-xs font-mono">{{ c.caseNumber }} · {{ c.category }}</p>

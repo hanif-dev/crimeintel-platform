@@ -34,7 +34,7 @@
             @click="router.push(`/cases/${c.id}`)"
             class="hover:bg-ink-700/40 cursor-pointer transition-colors group">
             <td class="px-5 py-3">
-              <span :class="`badge-${c.riskLevel.toLowerCase()}`">{{ c.riskLevel }}</span>
+              <span :class="`badge-${(c.riskLevel || '').toLowerCase()}`">{{ c.riskLevel }}</span>
             </td>
             <td class="px-5 py-3">
               <p class="text-white text-sm font-display font-medium group-hover:text-signal transition-colors">{{ c.title }}</p>
